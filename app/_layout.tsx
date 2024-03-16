@@ -1,4 +1,5 @@
 import Colors from "@/constants/Colors";
+import { AuthProvider } from "@/context/AuthContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -79,7 +80,11 @@ function InitialLayout() {
 }
 
 function RootLayout() {
-  return <InitialLayout />;
+  return (
+    <AuthProvider>
+      <InitialLayout />
+    </AuthProvider>
+  );
 }
 
 export default RootLayout;

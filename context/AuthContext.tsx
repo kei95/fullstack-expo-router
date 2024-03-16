@@ -44,6 +44,8 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
         },
         body: JSON.stringify({ email, password }),
       });
+
+      return result;
     } catch (error) {
       console.error("Error occurred: ", JSON.stringify(error));
     }
