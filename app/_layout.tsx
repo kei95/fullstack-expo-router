@@ -1,8 +1,8 @@
 import Colors from "@/constants/Colors";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Slot, Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import { useEffect } from "react";
@@ -21,6 +21,10 @@ function InitialLayout() {
     ...FontAwesome.font,
   });
 
+  const { token, initialized } = useAuth();
+  const router = useRouter();
+  const segments = useSegments();
+
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
@@ -32,8 +36,20 @@ function InitialLayout() {
     }
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
+  useEffect(() => {
+    if (!initialized) return;
+
+    const inAuthGroup = segments[0] === "(authenticated)";
+
+    if (token) {
+      router.replace("/(authenticated)/(drawer)/(tabs)/home");
+    } else if (!token && inAuthGroup) {
+      router.replace("/");
+    }
+  }, [token, initialized]);
+
+  if (!loaded || !initialized) {
+    return <Slot />;
   }
 
   return (
